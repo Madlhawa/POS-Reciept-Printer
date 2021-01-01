@@ -1,0 +1,377 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="HarithmaSalesModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Discount">
+          <Key>
+            <PropertyRef Name="DiscountID" />
+          </Key>
+          <Property Name="DiscountID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ItemID" Type="int" />
+          <Property Name="DiscountValue" Type="decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="DiscountStartDate" Type="datetime" />
+          <Property Name="DiscountEndDate" Type="datetime" Nullable="false" />
+          <Property Name="DiscountDuration" Type="int" />
+          <Property Name="DiscountStatus" Type="nchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="Inventory">
+          <Key>
+            <PropertyRef Name="InventoryID" />
+          </Key>
+          <Property Name="InventoryID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ItemID" Type="int" Nullable="false" />
+          <Property Name="StockPrice" Type="decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="SellingPrice" Type="decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
+          <Property Name="Remarks" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Invoice">
+          <Key>
+            <PropertyRef Name="InvoiceID" />
+          </Key>
+          <Property Name="InvoiceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InvoiceDate" Type="datetime" Nullable="false" />
+          <Property Name="InvoiceDiscount" Type="decimal" Precision="19" Scale="4" />
+          <Property Name="InvoiceAmount" Type="decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="InvoiceAmountRecieved" Type="decimal" Precision="19" Scale="4" />
+          <Property Name="InvoiceBalance" Type="decimal" Precision="19" Scale="4" />
+          <Property Name="InvoicePaymentMethod" Type="nvarchar" MaxLength="50" />
+          <Property Name="InvoiceRemarks" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Item">
+          <Key>
+            <PropertyRef Name="ItemID" />
+          </Key>
+          <Property Name="ItemID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ItemName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ItemDescription" Type="nvarchar(max)" />
+          <Property Name="ItemStockPrice" Type="decimal" Precision="19" Scale="4" />
+          <Property Name="ItemSellingPrice" Type="decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="ItemAvailableQuantity" Type="int" Nullable="false" />
+          <Property Name="ItemDiscount" Type="decimal" Precision="19" Scale="4" />
+          <Property Name="ItemDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Item_Invoice">
+          <Key>
+            <PropertyRef Name="Item_Invoice_ID" />
+          </Key>
+          <Property Name="Item_Invoice_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ItemID" Type="int" Nullable="false" />
+          <Property Name="InvoiceID" Type="int" Nullable="false" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="19" Scale="4" />
+        </EntityType>
+        <Association Name="Invoice_ItemInvoice">
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="1" />
+          <End Role="Item_Invoice" Type="Self.Item_Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Invoice">
+              <PropertyRef Name="InvoiceID" />
+            </Principal>
+            <Dependent Role="Item_Invoice">
+              <PropertyRef Name="InvoiceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Item_Discount">
+          <End Role="Item" Type="Self.Item" Multiplicity="0..1" />
+          <End Role="Discount" Type="Self.Discount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="ItemID" />
+            </Principal>
+            <Dependent Role="Discount">
+              <PropertyRef Name="ItemID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Item_Inventory">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="Inventory" Type="Self.Inventory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="ItemID" />
+            </Principal>
+            <Dependent Role="Inventory">
+              <PropertyRef Name="ItemID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Item_ItemInvoice">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="Item_Invoice" Type="Self.Item_Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="ItemID" />
+            </Principal>
+            <Dependent Role="Item_Invoice">
+              <PropertyRef Name="ItemID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="HarithmaSalesModelStoreContainer">
+          <EntitySet Name="Discount" EntityType="Self.Discount" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Inventory" EntityType="Self.Inventory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Invoice" EntityType="Self.Invoice" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Item" EntityType="Self.Item" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Item_Invoice" EntityType="Self.Item_Invoice" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="Invoice_ItemInvoice" Association="Self.Invoice_ItemInvoice">
+            <End Role="Invoice" EntitySet="Invoice" />
+            <End Role="Item_Invoice" EntitySet="Item_Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="Item_Discount" Association="Self.Item_Discount">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="Discount" EntitySet="Discount" />
+          </AssociationSet>
+          <AssociationSet Name="Item_Inventory" Association="Self.Item_Inventory">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="Inventory" EntitySet="Inventory" />
+          </AssociationSet>
+          <AssociationSet Name="Item_ItemInvoice" Association="Self.Item_ItemInvoice">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="Item_Invoice" EntitySet="Item_Invoice" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="HarithmaSalesModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Discount">
+          <Key>
+            <PropertyRef Name="DiscountID" />
+          </Key>
+          <Property Name="DiscountID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ItemID" Type="Int32" />
+          <Property Name="DiscountValue" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="DiscountStartDate" Type="DateTime" Precision="3" />
+          <Property Name="DiscountEndDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DiscountDuration" Type="Int32" />
+          <Property Name="DiscountStatus" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="Item" Relationship="Self.Item_Discount" FromRole="Discount" ToRole="Item" />
+        </EntityType>
+        <EntityType Name="Inventory">
+          <Key>
+            <PropertyRef Name="InventoryID" />
+          </Key>
+          <Property Name="InventoryID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ItemID" Type="Int32" Nullable="false" />
+          <Property Name="StockPrice" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="SellingPrice" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Item" Relationship="Self.Item_Inventory" FromRole="Inventory" ToRole="Item" />
+        </EntityType>
+        <EntityType Name="Invoice">
+          <Key>
+            <PropertyRef Name="InvoiceID" />
+          </Key>
+          <Property Name="InvoiceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InvoiceDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="InvoiceDiscount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="InvoiceAmount" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="InvoiceAmountRecieved" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="InvoiceBalance" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="InvoicePaymentMethod" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InvoiceRemarks" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Item_Invoice" Relationship="Self.Invoice_ItemInvoice" FromRole="Invoice" ToRole="Item_Invoice" />
+        </EntityType>
+        <EntityType Name="Item">
+          <Key>
+            <PropertyRef Name="ItemID" />
+          </Key>
+          <Property Name="ItemID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ItemName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ItemDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ItemStockPrice" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="ItemSellingPrice" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="ItemAvailableQuantity" Type="Int32" Nullable="false" />
+          <Property Name="ItemDiscount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="ItemDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Discounts" Relationship="Self.Item_Discount" FromRole="Item" ToRole="Discount" />
+          <NavigationProperty Name="Inventories" Relationship="Self.Item_Inventory" FromRole="Item" ToRole="Inventory" />
+          <NavigationProperty Name="Item_Invoice" Relationship="Self.Item_ItemInvoice" FromRole="Item" ToRole="Item_Invoice" />
+        </EntityType>
+        <EntityType Name="Item_Invoice">
+          <Key>
+            <PropertyRef Name="Item_Invoice_ID" />
+          </Key>
+          <Property Name="Item_Invoice_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ItemID" Type="Int32" Nullable="false" />
+          <Property Name="InvoiceID" Type="Int32" Nullable="false" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="Amount" Type="Decimal" Precision="19" Scale="4" />
+          <NavigationProperty Name="Invoice" Relationship="Self.Invoice_ItemInvoice" FromRole="Item_Invoice" ToRole="Invoice" />
+          <NavigationProperty Name="Item" Relationship="Self.Item_ItemInvoice" FromRole="Item_Invoice" ToRole="Item" />
+        </EntityType>
+        <Association Name="Item_Discount">
+          <End Role="Item" Type="Self.Item" Multiplicity="0..1" />
+          <End Role="Discount" Type="Self.Discount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="ItemID" />
+            </Principal>
+            <Dependent Role="Discount">
+              <PropertyRef Name="ItemID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Item_Inventory">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="Inventory" Type="Self.Inventory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="ItemID" />
+            </Principal>
+            <Dependent Role="Inventory">
+              <PropertyRef Name="ItemID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Invoice_ItemInvoice">
+          <End Role="Invoice" Type="Self.Invoice" Multiplicity="1" />
+          <End Role="Item_Invoice" Type="Self.Item_Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Invoice">
+              <PropertyRef Name="InvoiceID" />
+            </Principal>
+            <Dependent Role="Item_Invoice">
+              <PropertyRef Name="InvoiceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Item_ItemInvoice">
+          <End Role="Item" Type="Self.Item" Multiplicity="1" />
+          <End Role="Item_Invoice" Type="Self.Item_Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="ItemID" />
+            </Principal>
+            <Dependent Role="Item_Invoice">
+              <PropertyRef Name="ItemID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="HarithmaSalesEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Discounts" EntityType="Self.Discount" />
+          <EntitySet Name="Inventories" EntityType="Self.Inventory" />
+          <EntitySet Name="Invoices" EntityType="Self.Invoice" />
+          <EntitySet Name="Items" EntityType="Self.Item" />
+          <EntitySet Name="Item_Invoice" EntityType="Self.Item_Invoice" />
+          <AssociationSet Name="Item_Discount" Association="Self.Item_Discount">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="Discount" EntitySet="Discounts" />
+          </AssociationSet>
+          <AssociationSet Name="Item_Inventory" Association="Self.Item_Inventory">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="Inventory" EntitySet="Inventories" />
+          </AssociationSet>
+          <AssociationSet Name="Invoice_ItemInvoice" Association="Self.Invoice_ItemInvoice">
+            <End Role="Invoice" EntitySet="Invoices" />
+            <End Role="Item_Invoice" EntitySet="Item_Invoice" />
+          </AssociationSet>
+          <AssociationSet Name="Item_ItemInvoice" Association="Self.Item_ItemInvoice">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="Item_Invoice" EntitySet="Item_Invoice" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="HarithmaSalesModelStoreContainer" CdmEntityContainer="HarithmaSalesEntities">
+          <EntitySetMapping Name="Discounts">
+            <EntityTypeMapping TypeName="HarithmaSalesModel.Discount">
+              <MappingFragment StoreEntitySet="Discount">
+                <ScalarProperty Name="DiscountID" ColumnName="DiscountID" />
+                <ScalarProperty Name="ItemID" ColumnName="ItemID" />
+                <ScalarProperty Name="DiscountValue" ColumnName="DiscountValue" />
+                <ScalarProperty Name="DiscountStartDate" ColumnName="DiscountStartDate" />
+                <ScalarProperty Name="DiscountEndDate" ColumnName="DiscountEndDate" />
+                <ScalarProperty Name="DiscountDuration" ColumnName="DiscountDuration" />
+                <ScalarProperty Name="DiscountStatus" ColumnName="DiscountStatus" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Inventories">
+            <EntityTypeMapping TypeName="HarithmaSalesModel.Inventory">
+              <MappingFragment StoreEntitySet="Inventory">
+                <ScalarProperty Name="InventoryID" ColumnName="InventoryID" />
+                <ScalarProperty Name="ItemID" ColumnName="ItemID" />
+                <ScalarProperty Name="StockPrice" ColumnName="StockPrice" />
+                <ScalarProperty Name="SellingPrice" ColumnName="SellingPrice" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Invoices">
+            <EntityTypeMapping TypeName="HarithmaSalesModel.Invoice">
+              <MappingFragment StoreEntitySet="Invoice">
+                <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+                <ScalarProperty Name="InvoiceDate" ColumnName="InvoiceDate" />
+                <ScalarProperty Name="InvoiceDiscount" ColumnName="InvoiceDiscount" />
+                <ScalarProperty Name="InvoiceAmount" ColumnName="InvoiceAmount" />
+                <ScalarProperty Name="InvoiceAmountRecieved" ColumnName="InvoiceAmountRecieved" />
+                <ScalarProperty Name="InvoiceBalance" ColumnName="InvoiceBalance" />
+                <ScalarProperty Name="InvoicePaymentMethod" ColumnName="InvoicePaymentMethod" />
+                <ScalarProperty Name="InvoiceRemarks" ColumnName="InvoiceRemarks" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Items">
+            <EntityTypeMapping TypeName="HarithmaSalesModel.Item">
+              <MappingFragment StoreEntitySet="Item">
+                <ScalarProperty Name="ItemID" ColumnName="ItemID" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="ItemDescription" ColumnName="ItemDescription" />
+                <ScalarProperty Name="ItemStockPrice" ColumnName="ItemStockPrice" />
+                <ScalarProperty Name="ItemSellingPrice" ColumnName="ItemSellingPrice" />
+                <ScalarProperty Name="ItemAvailableQuantity" ColumnName="ItemAvailableQuantity" />
+                <ScalarProperty Name="ItemDiscount" ColumnName="ItemDiscount" />
+                <ScalarProperty Name="ItemDate" ColumnName="ItemDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Item_Invoice">
+            <EntityTypeMapping TypeName="HarithmaSalesModel.Item_Invoice">
+              <MappingFragment StoreEntitySet="Item_Invoice">
+                <ScalarProperty Name="Item_Invoice_ID" ColumnName="Item_Invoice_ID" />
+                <ScalarProperty Name="ItemID" ColumnName="ItemID" />
+                <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
